@@ -4,7 +4,7 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 
-import { UserResolver } from "./modules/user";
+import { UserResolver } from "./modules/user/UserResolver";
 
 (async () => {
     const app = express();

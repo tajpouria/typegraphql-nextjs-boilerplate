@@ -6,7 +6,7 @@ import {
     BeforeInsert
 } from "typeorm";
 import { hash } from "bcryptjs";
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID, Root } from "type-graphql";
 
 @ObjectType()
 @Entity()
@@ -23,8 +23,10 @@ export class User extends BaseEntity {
     @Column("text")
     lastName: string;
 
-    @Field()
-    fullName: string;
+    @Field({ nullable: true })
+    fullName(@Root() parent: User): String {
+        return `${parent.firstName} ${parent.lastName}`;
+    }
 
     @Field()
     @Column("text", { unique: true })

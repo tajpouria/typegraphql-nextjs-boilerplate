@@ -36,7 +36,7 @@ class HelloResolver {
 })();
 ```
 
-### write mutation
+## write mutation
 
 ```typescript
 @ObjectType()
@@ -102,5 +102,96 @@ export class UserResolver {
     fullName(@Root parent: User) {
         return `${parent.firstName} ${parent.lastName}`;
     }
+}
+```
+
+_there is also a shorter way to **resolve fields** directly on entity_
+
+./entity/User.ts
+
+```typescript
+@Entity()
+export class User extends BaseEntity {
+    // other class @Column()
+
+    @Field()
+    fullName(@Root() parent: User): string {
+        return `${parent.firstName} ${parent.lastName}`;
+    }
+}
+```
+
+## Validation
+
+### defining an @inputType and use it as @Arg
+
+> yarn add class-validator
+
+./modules/user/register/RegisterInput.ts
+
+```typescript
+import { Length, isEmail } from "class-validation";
+
+@InputType()
+export class RegisterInput {
+    @Field()
+    @Length(3, 255)
+    firstName: string;
+
+    @Field()
+    @Length(3, 255)
+    lastName: string;
+
+    @Field()
+    @isEmail()
+    email: string;
+
+    @Field()
+    password: string;
+}
+```
+
+./modules/user/register/userResolver
+
+```typescript
+@Resolver()
+export class UserResolver {
+    @Mutation(() => User)
+    register(@Arg("input")
+    {
+        firstName,
+        lastName,
+        email,
+        password
+    }: RegisterInput): Promise<User> {
+        // doing register stuff
+    }
+}
+```
+
+here is how args looks like:
+
+```graphql
+mutation Register {
+    register(registerInput: {firstName, lastName, email, password}){
+        id
+        .
+        .
+        .
+    }
+}
+```
+
+## Sundry
+
+### ts-node-dev
+
+Tweaked version of node-dev that uses ts-node under the hood.
+
+> yarn add -D ts-node-dev
+
+```json
+{
+    "start": "tsnd --respawn  src/index.ts"
 }
 ```
