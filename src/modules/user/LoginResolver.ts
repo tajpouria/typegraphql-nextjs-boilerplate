@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
+import { Resolver, Mutation, Arg, Ctx } from "type-graphql";
 import { User } from "../../entity/User";
 import { LoginInput } from "./login/LoginInput";
 import { compare } from "bcryptjs";

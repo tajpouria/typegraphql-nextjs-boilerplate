@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 export async function sendConfirmationEmail(
-    email: string,
+    _email: string,
     confirmationLink: string
 ) {
     const testAccount = await nodemailer.createTestAccount();

@@ -1,12 +1,14 @@
-import { Resolver, Query, Mutation, Arg } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
 import { User } from "../../entity/User";
 import { RegisterInput } from "./register/RegisterInput";
 import { sendConfirmationEmail } from "../utils/sendConfirmationEmail";
 import { createAndSetConfirmationLink } from "../utils/createAndSetConfirmationLink";
+import { IsAuth } from "../middleware/IsAuth";
 
 @Resolver()
 export class UserResolver {
     @Query(() => String)
+    @UseMiddleware(IsAuth)
     hello(): string {
         return "hello user";
     }

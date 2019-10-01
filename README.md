@@ -314,7 +314,38 @@ export class ProtectedHelloResolver {
 
 ### Custom Middleware
 
-[issues #433](https://github.com/MichalLytek/type-graphql/issues/433)
+./modules/middleware/IsAuth.ts
+
+```typescript
+import { MiddlewareFn } from "type-graphql";
+import { MyContext } from "../../types/MyContext";
+
+export const IsAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
+    if (!context.req.session!.userId) {
+        throw new Error("Not Authorized!");
+    }
+    return next();
+};
+```
+
+./modules/userResolver.ts
+
+```typescript
+@Resolver()
+export class UserResolver {
+    @Query(() => String)
+    @UseMiddleware(IsAuth)
+    hello(): string {
+        return "hello user";
+    }
+
+    /* 
+    .
+    .
+    .
+    */
+}
+```
 
 ## Confirm User using Confirmation Email with nodemailer
 
