@@ -1,6 +1,8 @@
 import { Resolver, Query, Mutation, Arg } from "type-graphql";
 import { User } from "../../entity/User";
 import { RegisterInput } from "./register/RegisterInput";
+import { sendConfirmationEmail } from "../utils/sendConfirmationEmail";
+import { createAndSetConfirmationLink } from "../utils/createAndSetConfirmationLink";
 
 @Resolver()
 export class UserResolver {
@@ -30,6 +32,9 @@ export class UserResolver {
             email,
             password
         }).save();
+
+        const confirmationLink = await createAndSetConfirmationLink(user.id);
+        await sendConfirmationEmail(email, confirmationLink);
 
         return user;
     }

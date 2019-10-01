@@ -36,6 +36,10 @@ export class User extends BaseEntity {
     @Column("text")
     password: string;
 
+    @Field()
+    @Column("bool", { default: false })
+    confirmed: boolean;
+
     @BeforeInsert()
     async hashPassword() {
         const hashedPassword = await hash(this.password, 12);

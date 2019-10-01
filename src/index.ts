@@ -11,6 +11,7 @@ import { UserResolver } from "./modules/user/UserResolver";
 import { redis } from "./redis";
 import { LoginResolver } from "./modules/user/LoginResolver";
 import { MeResolver } from "./modules/user/MeResolver";
+import { ConfirmUserResolver } from "./modules/user/ConfirmUserResolver";
 
 const RedisStore = connectRedis(session);
 
@@ -37,7 +38,7 @@ const RedisStore = connectRedis(session);
     await createConnection();
 
     const schema = await buildSchema({
-        resolvers: [UserResolver, LoginResolver, MeResolver]
+        resolvers: [UserResolver, LoginResolver, MeResolver, ConfirmUserResolver]
     });
 
     const apolloServer = new ApolloServer({
@@ -47,7 +48,7 @@ const RedisStore = connectRedis(session);
 
     apolloServer.applyMiddleware({ app });
 
-    app.listen(4000, () => {
+    app.listen(4000, async () => {
         console.log("Listening on port 4000...");
     });
 })();

@@ -20,6 +20,11 @@ export class LoginResolver {
             return null;
         }
 
+        if (!user.confirmed) {
+            console.error("User not confirmed");
+            return null;
+        }
+
         const isValid = await compare(password, user.password);
 
         if (!isValid) {

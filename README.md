@@ -316,6 +316,160 @@ export class ProtectedHelloResolver {
 
 [issues #433](https://github.com/MichalLytek/type-graphql/issues/433)
 
+## Confirm User using Confirmation Email with nodemailer
+
+### confirmation @Column on @Entity and forbid not confirmed user to login
+
+./entity/User.ts
+
+```typescript
+@ObjectType()
+@Entity()
+export class User extends BaseEntity {
+    /* 
+    .
+    .
+    .
+    */
+    @Field()
+    @Column("bool", { default: false })
+    confirmed: boolean;
+}
+```
+
+./modules/user/loginResolver.ts
+
+```typescript
+@Resolver()
+export class LoginResolver {
+    @Mutation(() => User, { nullable: true })
+    async login(
+        @Arg("input")
+        { email, password }: LoginInput,
+        @Ctx() ctx: MyContext
+    ): Promise<User | null> {
+        /*
+        .
+        .
+        .
+        */
+        if (!user.confirmed) {
+            console.error("User not confirmed");
+            return null;
+        }
+        /*
+        .
+        .
+        .
+        */
+    }
+}
+```
+
+### install in setting up nodemailer sendingEmail function
+
+> yarn add nodemailer
+> yarn add -D nodemailer
+
+./modules/utils/sendConfirmationEmail.ts
+
+```typescript
+import nodemailer from "nodemailer";
+
+export async function sendConfirmationEmail(
+    email: string,
+    confirmationLink: string
+) {
+    const testAccount = await nodemailer.createTestAccount();
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: testAccount.user, // generated ethereal user
+            pass: testAccount.pass // generated ethereal password
+        }
+    });
+
+    const info = await transporter.sendMail({
+        from: '"Fred Foo 👻" <foo@example.com>', // sender address
+        to: "bar@example.com, baz@example.com", // list of receivers
+        subject: "Confirmation ✔", // Subject line
+        text: "Hello world?", // plain text body
+        html: `<a href="${confirmationLink}">${confirmationLink}</a>` // html body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+}
+```
+
+### modify register to set token and send confirmation email
+
+./modules/user/userResolver.ts
+
+```typescript
+import { v4 } from "uuid";
+import { redis } from "../../redis";
+import { sendConfirmationEmail } from "../utils/sendConfirmationEmail";
+
+const createAndSetConfirmationLink = async (userId: number) => {
+    const token = v4();
+
+    await redis.set(token, userId, "ex", 60 * 60 * 24); // *** expiration in 1 day
+
+    return `http://localhost:3000/${token}`;
+};
+
+@Resolver()
+export class UserResolver {
+    @Mutation(() => User)
+    async register(@Arg("input")
+    {
+        firstName,
+        lastName,
+        email,
+        password
+    }: RegisterInput): Promise<User> {
+        const user = await User.create({
+            firstName,
+            lastName,
+            email,
+            password
+        }).save();
+
+        const confirmationLink = await createAndSetConfirmationLink(user.id);
+        await sendConfirmationEmail(email, confirmationLink);
+
+        return user;
+    }
+}
+```
+
+### confirmUserResolver
+
+./modules/user/confirmUserResolver.ts
+
+```typescript
+@Resolver()
+export class ConfirmUserResolver {
+    @Mutation(() => Boolean)
+    async confirm(@Arg("token") token: string): Promise<boolean> {
+        const userId = await redis.get(token);
+
+        if (!userId) {
+            return false;
+        }
+
+        await redis.del(token); // *** delete stored token
+        await User.update(userId, { confirmed: true });
+
+        return true;
+    }
+}
+```
+
 ## Sundry
 
 ### ts-node-dev
