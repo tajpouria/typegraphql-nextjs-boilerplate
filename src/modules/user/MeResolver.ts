@@ -12,7 +12,7 @@ export class MeResolver {
         }
 
         const user = await User.findOne(userId);
-
+ 
         return user;
     }
 }

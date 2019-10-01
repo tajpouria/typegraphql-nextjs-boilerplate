@@ -283,6 +283,39 @@ export class MeResolver {
 }
 ```
 
+## Middleware
+
+### @Authorized()
+
+```typescript
+import {@Authorized } from 'type-graphql'
+
+@Resolver()
+export class ProtectedHelloResolver {
+    @Query(() => String, { nullable: true })
+    @Authorized()
+    hello() {
+        return "hello";
+    }
+}
+(async() => {
+
+    const schema = await buildSchema({
+        resolvers: [UserResolver, LoginResolver, MeResolver],
+        authChecker({ context }: { context: MyContext }) {
+            if (!context.req.session!.userId) {
+                return false;
+            }
+            return true;
+        }
+    });
+})()
+```
+
+### Custom Middleware
+
+[issues #433](https://github.com/MichalLytek/type-graphql/issues/433)
+
 ## Sundry
 
 ### ts-node-dev
