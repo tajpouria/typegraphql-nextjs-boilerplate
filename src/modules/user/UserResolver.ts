@@ -1,9 +1,9 @@
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
 import { User } from "../../entity/User";
 import { RegisterInput } from "./register/RegisterInput";
-import { sendConfirmationEmail } from "../utils/sendConfirmationEmail";
-import { createAndSetConfirmationLink } from "../utils/createAndSetConfirmationLink";
-import { IsAuth } from "../middleware/IsAuth";
+import { sendEmail } from "./utils/sendEmail";
+import { createAndSetConfirmationLink } from "./utils/createAndSetConfirmationLink";
+import { IsAuth } from "./middleware/IsAuth";
 
 @Resolver()
 export class UserResolver {
@@ -36,7 +36,7 @@ export class UserResolver {
         }).save();
 
         const confirmationLink = await createAndSetConfirmationLink(user.id);
-        await sendConfirmationEmail(email, confirmationLink);
+        await sendEmail(email, confirmationLink);
 
         return user;
     }

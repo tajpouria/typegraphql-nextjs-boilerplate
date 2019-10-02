@@ -24,7 +24,10 @@ class HelloResolver {
 (async () => {
     const app = express();
 
-    const schema = await buildSchema({ resolvers: [HelloResolver] });
+    const schema = await buildSchema({
+        resolver: [__dirname + '/modules/**/*.ts']
+        // resolvers: [HelloResolver]
+    });
 
     const apolloServer = new ApolloServer({ schema });
 

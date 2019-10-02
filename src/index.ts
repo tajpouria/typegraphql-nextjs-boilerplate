@@ -38,7 +38,7 @@ const RedisStore = connectRedis(session);
     await createConnection();
 
     const schema = await buildSchema({
-        resolvers: [UserResolver, LoginResolver, MeResolver, ConfirmUserResolver]
+        resolvers: [__dirname + "/modules/**/*.ts"]
     });
 
     const apolloServer = new ApolloServer({
