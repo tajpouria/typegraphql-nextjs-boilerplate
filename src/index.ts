@@ -43,7 +43,7 @@ const RedisStore = connectRedis(session);
 
     const apolloServer = new ApolloServer({
         schema,
-        context: ({ req }) => ({ req })
+        context: ({ req, res }) => ({ req, res })
     });
 
     apolloServer.applyMiddleware({ app });

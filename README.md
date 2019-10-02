@@ -25,7 +25,7 @@ class HelloResolver {
     const app = express();
 
     const schema = await buildSchema({
-        resolver: [__dirname + '/modules/**/*.ts']
+        resolver: [__dirname + "/modules/**/*.ts"]
         // resolvers: [HelloResolver]
     });
 
@@ -500,6 +500,31 @@ export class ConfirmUserResolver {
         await User.update(userId, { confirmed: true });
 
         return true;
+    }
+}
+```
+
+## logout
+
+./modules/LogoutResolver.ts
+
+```typescript
+@Resolver()
+export class LogoutResolver {
+    @Mutation(() => Boolean)
+    async logout(@Ctx() ctx: MyContext): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            // destroy the session
+            ctx.req.session!.destroy(err => {
+                if (err) {
+                    console.error(err);
+                    reject(false);
+                }
+
+                ctx.res.clearCookie("qid"); // clear the cookie
+                resolve(true);
+            });
+        });
     }
 }
 ```
