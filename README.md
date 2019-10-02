@@ -529,6 +529,49 @@ export class LogoutResolver {
 }
 ```
 
+### inputMixin
+
+./modules/shared/PasswordMixin.ts
+
+```typescript
+import { ClassType, InputType, Field } from "type-graphql";
+import { MinLength } from "class-validator";
+
+export const PasswordMixin = <T extends ClassType>(BaseClass: T) => {
+    @InputType({ isAbstract: true }) // Error: Schema must contain unique named types but contains multiple types named
+    class PasswordInput extends BaseClass {
+        @Field()
+        @MinLength(3)
+        password: string;
+    }
+
+    return PasswordInput;
+};
+```
+
+./modules/login/LoginInput.ts
+
+```typescript
+import { PasswordMixin } from "../shared/PasswordMixin";
+
+@InputType()
+export class LoginInput extends PasswordMixin(class {}) {
+    // Instead of class {} you can place whenever input class you want (basic nesting extension)
+    @Field()
+    @IsEmail()
+    email: string;
+}
+```
+
+:4000/graphql
+
+```graphql
+type LoginInput {
+    password: String! # added by extends
+    email: String!
+}
+```
+
 ## Sundry
 
 ### ts-node-dev

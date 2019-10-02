@@ -7,11 +7,7 @@ import cors from "cors";
 import session from "express-session";
 import connectRedis from "connect-redis";
 
-import { UserResolver } from "./modules/user/UserResolver";
 import { redis } from "./redis";
-import { LoginResolver } from "./modules/user/LoginResolver";
-import { MeResolver } from "./modules/user/MeResolver";
-import { ConfirmUserResolver } from "./modules/user/ConfirmUserResolver";
 
 const RedisStore = connectRedis(session);
 

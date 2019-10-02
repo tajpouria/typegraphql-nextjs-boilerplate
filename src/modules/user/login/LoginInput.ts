@@ -1,9 +1,9 @@
 import { InputType, Field } from "type-graphql";
 import { IsEmail } from "class-validator";
-import { PasswordInput } from "../shared/PasswordInput";
+import { PasswordMixin } from "../shared/PasswordMixin";
 
 @InputType()
-export class LoginInput extends PasswordInput {
+export class LoginInput extends PasswordMixin(class {}) {
     @Field()
     @IsEmail()
     email: string;
