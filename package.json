@@ -1,5 +1,5 @@
 {
-    "name": "TypeGraphql-Series",
+    "name": "type_graphql_series",
     "version": "1.0.0",
     "main": "index.js",
     "license": "MIT",
@@ -16,6 +16,7 @@
         "nodemailer": "^6.3.0",
         "pg": "^7.12.1",
         "reflect-metadata": "^0.1.13",
+        "ts-node": "^8.4.1",
         "type-graphql": "^0.17.5",
         "typeorm": "^0.2.19",
         "typescript": "^3.6.3",
@@ -27,13 +28,20 @@
         "@types/cors": "^2.8.6",
         "@types/express": "^4.17.1",
         "@types/express-session": "^1.15.14",
+        "@types/faker": "^4.1.5",
         "@types/ioredis": "^4.0.18",
+        "@types/jest": "^24.0.18",
         "@types/node": "^12.7.8",
         "@types/nodemailer": "^6.2.1",
         "@types/uuid": "^3.4.5",
+        "faker": "^4.1.0",
+        "jest": "^24.9.0",
+        "ts-jest": "^24.1.0",
         "ts-node-dev": "^1.0.0-pre.43"
     },
     "scripts": {
-        "start": "tsnd --respawn  src/index.ts"
+        "start": "tsnd --respawn  src/index.ts",
+        "setup:db": "yarn ts-node src/test-utils/setup.ts",
+        "test": "yarn run setup:db && jest --detectOpenHandles"
     }
 }

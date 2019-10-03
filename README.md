@@ -572,7 +572,257 @@ type LoginInput {
 }
 ```
 
-## Sundry
+## Testing Resolvers
+
+### setup test environment
+
+-   install dependencies
+    > yarn add --dev jest typescript ts-jest @types/jest
+-   generate jest.config.jes
+    > yarn ts-jest config:init
+
+./ jest.config.js
+
+```javascript
+module.exports = {
+    preset: "ts-jest",
+    testEnvironment: "node",
+    forceExit: true,
+    verbose: true,
+    setupFilesAfterEnv: ["./jest.setup.js"] // this file added manually because integration test take a while to resolve
+};
+```
+
+./jest.setup.js
+
+```javascript
+jest.setTimeout(30000);
+```
+
+-   adding create connection script
+
+src/test-utils/testConn.ts
+
+```typescript
+export const testConn = (drop: boolean = false) => {
+    createConnection({
+{
+        type: "postgres",
+        host: "localhost",
+        port: 5432,
+        username: "postgres",
+        password: "postgres",
+        database: "typegraphql_series_test",
+        synchronize: drop,
+        dropSchema: drop, // drop drop database tables then connect
+        entities: [__dirname + "/../entity/*.*"] // path to entities
+    })
+}
+```
+
+src/test-utils/setup.ts
+
+```typescript
+testConn(true).then(() => process.exit());
+```
+
+./package.json
+
+```json
+{
+    "script": {
+        "setup:db": "yarn ts-node src/test-utils/setup.ts",
+        "test": "yarn run setup:db && jest --detectOpenHandles"
+    }
+}
+```
+
+### writing tests
+
+following contains two integration tests, using direct call graphql schema
+
+./test-utils/gCall.ts
+
+```typescript
+import { graphql, GraphQLSchema } from "graphql";
+import Maybe from "graphql/tsutils/Maybe";
+
+import { createSchema } from "../createSchema";
+
+interface Options {
+    source: string;
+    variableValues?: Maybe<{
+        [key: string]: any;
+    }>;
+    userId?: number;
+}
+
+let schema: GraphQLSchema;
+
+export const gCall = async ({ source, variableValues, userId }: Options) => {
+    if (!schema) {
+        schema = await createSchema(); // type-graphql await buildSchema({ resolvers })
+    }
+
+    return graphql({
+        schema,
+        source, // Query or Mutation : string
+        variableValues,
+        contextValue: {
+            // query context
+            req: {
+                session: { userId }
+            },
+            res: {
+                clearCookie: jest.fn()
+            }
+        }
+    });
+};
+```
+
+src/\_\_tests\_\_/register.spec.ts
+
+```typescript
+import { Connection } from "typeorm";
+import faker from "faker";
+import { testConn } from "../test-utils/testConn";
+import { gCall } from "../test-utils/gCall";
+import { User } from "../entity/User";
+
+describe("RegisterResolver", () => {
+    let connection: Connection;
+    beforeAll(async () => {
+        connection = await testConn();
+    });
+
+    afterAll(async () => {
+        await connection.close();
+    });
+
+    it("register the valid user", async () => {
+        const registerMutation = `mutation Register($input: RegisterInput!) {
+          register(input: $input) {
+            id
+            firstName
+            lastName
+            fullName
+            email
+            password
+            confirmed
+          }
+        }
+        `;
+
+        const person = {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        };
+
+        const response = await gCall({
+            source: registerMutation,
+            variableValues: {
+                input: person
+            }
+        });
+
+        expect(response).toMatchObject({
+            data: {
+                register: {
+                    firstName: person.firstName,
+                    lastName: person.lastName,
+                    email: person.email,
+                    confirmed: false
+                }
+            }
+        });
+
+        const user = await User.findOne({ where: { email: person.email } });
+        expect(user).toBeDefined();
+    });
+});
+```
+
+src/\_\_tests\_\_/me.spec.ts
+
+```typescript
+import { Connection } from "typeorm";
+import faker from "faker";
+import { testConn } from "../test-utils/testConn";
+import { gCall } from "../test-utils/gCall";
+import { User } from "../entity/User";
+
+describe("MeResolver", () => {
+    let connection: Connection;
+    beforeAll(async () => {
+        connection = await testConn();
+    });
+
+    afterAll(async () => {
+        await connection.close();
+    });
+
+    it("returns the user if userId is available in request session", async () => {
+        const meQuery = `query Me {
+   me {
+     id
+     firstName
+     lastName
+     fullName
+     email
+     password
+     confirmed
+   }
+ }`;
+
+        const user = await User.create({
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password()
+        }).save();
+
+        const response = await gCall({ source: meQuery, userId: user.id });
+
+        expect(response).toMatchObject({
+            data: {
+                me: {
+                    id: user.id.toString(),
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email
+                }
+            }
+        });
+    });
+
+    it("returns null if userId is NOT available in request session", async () => {
+        const meQuery = `query Me {
+   me {
+     id
+     firstName
+     lastName
+     fullName
+     email
+     password
+     confirmed
+   }
+ }`;
+
+        const response = await gCall({ source: meQuery });
+
+        expect(response).toMatchObject({
+            data: {
+                me: null
+            }
+        });
+    });
+});
+```
+
+## sundry
 
 ### ts-node-dev
 
