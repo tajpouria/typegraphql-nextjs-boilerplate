@@ -6,6 +6,7 @@ import { ForgotPasswordResolver } from "./modules/user/ForgotPasswordResolver";
 import { LoginResolver } from "./modules/user/LoginResolver";
 import { LogoutResolver } from "./modules/user/LogoutResolver";
 import { MeResolver } from "./modules/user/MeResolver";
+import { CreateUser } from "./modules/user/CreateUserResolver";
 
 export const createSchema = async () =>
     await buildSchema({
@@ -16,6 +17,7 @@ export const createSchema = async () =>
             ForgotPasswordResolver,
             LoginResolver,
             LogoutResolver,
-            MeResolver
+            MeResolver,
+            CreateUser
         ]
     });
