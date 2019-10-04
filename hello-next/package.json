@@ -1,0 +1,18 @@
+{
+    "name": "hello-next",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "next",
+        "build": "next build",
+        "start": "next start"
+    },
+    "dependencies": {
+        "isomorphic-unfetch": "^3.0.0",
+        "next": "^9.0.7",
+        "react": "^16.10.2",
+        "react-dom": "^16.10.2",
+        "react-markdown": "^4.2.2"
+    }
+}
