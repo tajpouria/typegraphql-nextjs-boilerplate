@@ -1,6 +1,6 @@
-# Type GraphQL Series
+# Type GraphQL Series Integrated with NextJS
 
-A quick introduction to type-graphql library : [https://typegraphql.ml/]
+A quick introduction to [type-graphql](https://typegraphql.ml) library with NextJS
 
 ## Bootstrap with apollo-server-graphql
 
@@ -983,9 +983,16 @@ query {
 }
 ```
 
+<hr/>
+
+### setup next_with_typescript_example
+
+> npx create-next-app --example with-typescript web
+> yarn yarn upgrade --interative
+
 ## sundry
 
-### ts-node-dev
+## ts-node-dev
 
 Tweaked version of node-dev that uses ts-node under the hood.
 
