@@ -9,11 +9,6 @@ import { setContext } from "apollo-link-context";
 import { ApolloProvider } from "@apollo/react-hooks";
 import fetch from "isomorphic-unfetch";
 
-interface Options {
-    apolloClient: any;
-    apolloState: any;
-}
-
 /**
  * Creates and provides the apolloContext
  * to a next.js PageTree. Use it by wrapping
@@ -22,6 +17,11 @@ interface Options {
  * @param {Object} [config]
  * @param {Boolean} [config.ssr=true]
  */
+
+interface Options {
+    apolloClient: ApolloClient<NormalizedCacheObject>;
+    apolloState: any;
+}
 export function withApollo(PageComponent: any, { ssr = true } = {}) {
     const WithApollo = ({
         apolloClient,
@@ -134,16 +134,19 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | null = null;
  * Creates or reuses apollo client in the browser.
  */
 
-function initApolloClient(initialState: {} | undefined, getToken: any) {
+function initApolloClient(
+    initialState: any,
+    { getToken }: { getToken: (req?: any) => string }
+) {
     // Make sure to create a new client for every server-side request so that data
     // isn't shared between connections (which would be bad)
     if (typeof window === "undefined") {
-        return createApolloClient(initialState, getToken);
+        return createApolloClient(initialState, { getToken });
     }
 
     // Reuse client on the client-side
     if (!apolloClient) {
-        apolloClient = createApolloClient(initialState, getToken);
+        apolloClient = createApolloClient(initialState, { getToken });
     }
 
     return apolloClient;
@@ -154,7 +157,10 @@ function initApolloClient(initialState: {} | undefined, getToken: any) {
  * @param  {Object} [initialState={}]
  * @param  {Object} config
  */
-function createApolloClient(initialState = {}, getToken: any = {}) {
+function createApolloClient(
+    initialState = {},
+    { getToken }: { getToken: (req?: any) => string }
+) {
     const fetchOptions = {};
 
     // If you are using a https_proxy, add fetchOptions with 'https-proxy-agent' agent instance

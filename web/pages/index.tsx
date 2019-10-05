@@ -1,19 +1,26 @@
-import * as React from 'react'
-import Link from 'next/link'
-import Layout from '../components/Layout'
-import { NextPage } from 'next'
+import { withApollo } from "../lib/apollo";
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/react-hooks";
 
-const IndexPage: NextPage = () => {
-  return (
-    <Layout title="Home | Next.js + TypeScript Example">
-      <h1>Hello Next.js 👋</h1>
-      <p>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </p>
-    </Layout>
-  )
-}
+const USERS = gql`
+    query {
+        users {
+            id
+            firstName
+            lastName
+            fullName
+            email
+            password
+            confirmed
+        }
+    }
+`;
 
-export default IndexPage
+const Index: React.FC = () => {
+    const { data } = useQuery(USERS);
+    console.log(data);
+
+    return <div>hello</div>;
+};
+
+export default withApollo(Index);
