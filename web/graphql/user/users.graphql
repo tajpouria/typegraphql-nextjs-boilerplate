@@ -3,6 +3,7 @@ query Users {
         id
         firstName
         lastName
+        fullName
         email
     }
 }

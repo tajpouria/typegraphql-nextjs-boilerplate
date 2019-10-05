@@ -994,6 +994,191 @@ query {
 
 https://github.com/zeit/next.js/blob/canary/examples/with-apollo-auth/lib/apollo.js
 
+## Introduction to [ Formik ](https://jaredpalmer.com/formik/)
+
+> yarn add formik
+
+_yup for validation_
+
+> yarn add yup
+
+### withFormik basics
+
+```jsx
+import { withFormik } from "formik";
+
+const myForm = ({email, handleChange, onSubmit}) => {
+    return(
+      <form onSubmit={handleSubmit}>
+            <input
+                name="email"
+                placeholder="email"
+                onChange={handleChange}
+                value={email}
+            />
+      </form >
+    )
+}
+
+export default withFormik({
+    mapPropsToValues() {
+        return {
+            email: "",
+            password: ""
+        },
+   onSubmit(values){
+       console.log(values)
+   }
+    }
+})(MyForm);
+```
+
+### using Form and Field
+
+```jsx
+import { Form, withFormik, Field } from "formik";
+
+const FormikIntro = ({ values }) => {
+    return (
+        <Form>
+            <Field name="email" type="email" placeholder="email" />
+            <Field name="password" type="password" placeholder="placeholder=" />
+            <label htmlFor="checkBox">
+                <Field name="rules" type="checkBox" checked={values.rules} />I
+                agree all rules.
+            </label>
+            <Field name="plan" component="select">
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+            </Field>
+            <button type="submit">Submit</button>
+        </Form>
+    );
+};
+
+export default withFormik({
+    mapPropsToValues() {
+        return { email: "", password: "", rules: true, plan: "free" };
+    },
+    handleSubmit(values) {
+        console.table(values);
+    }
+})(FormikIntro);
+```
+
+### validation using [ Yup ](https://github.com/jquense/yup) and errorHandling
+
+```jsx
+import { Form, withFormik, Field } from "formik";
+import { object, string } from "yup";
+
+const FormikIntro = ({ values, touched, errors, isSubmitting }) => {
+    return (
+        <Form>
+            {touched.email && errors.email && <p>{errors.email}</p>}
+            <Field name="email" type="email" placeholder="email" />
+            {touched.password && errors.password && <p>{errors.password}</p>}
+            <Field name="password" type="password" placeholder="placeholder=" />
+            <label htmlFor="checkBox">
+                <Field name="rules" type="checkBox" checked={values.rules} />I
+                agree all rules.
+            </label>
+            <Field name="plan" component="select">
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+            </Field>
+            <button disabled={isSubmitting} type="submit">
+                Submit
+            </button>
+        </Form>
+    );
+};
+
+export default withFormik({
+    mapPropsToValues() {
+        return { email: "", password: "", rules: true, plan: "free" };
+    },
+    handleSubmit(values, { setError, resetForm, setSubmitting }) {
+        console.table(values);
+        setTimeout(() => {
+            if (email === "givenEmail@gmail.com") {
+                setError({ email: "Email is already given" });
+            }
+            resetForm();
+            setSubmitting(false);
+        }, 2000);
+    },
+    validationSchema: object().shape({
+        email: string()
+            .email("Email not valid")
+            .required("Email is required"),
+        password: string()
+            .min(9, "Password must be 9 character or longer")
+            .required("Password is required")
+    })
+})(FormikIntro);
+```
+
+### passing props methods
+
+```jsx
+import * as React from "react";
+import { Formik, Form, Field } from "formik";
+import Layout from "../components/Layout";
+import { useRegisterMutation } from "../generated/graphql";
+import { withApollo } from "../lib/apollo";
+
+const RegisterPage: React.FC = () => {
+    const [register] = useRegisterMutation();
+    const handleSubmit = React.useCallback(async values => {
+        const response = await register({ variables: { input: values } });
+        console.log(response);
+    }, []);
+
+    return (
+        <Formik
+            initialValues={{
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: ""
+            }}
+            onSubmit={handleSubmit}
+        >
+            {() => (
+                <Layout title="Register">
+                    <Form>
+                        <div>
+                            <Field name="firstName" placeholder="firstName" />
+                        </div>
+                        <div>
+                            <Field name="lastName" placeholder="lastName" />
+                        </div>
+                        <div>
+                            <Field
+                                name="email"
+                                type="email"
+                                placeholder="email"
+                            />
+                        </div>
+                        <div>
+                            <Field
+                                name="password"
+                                type="password"
+                                placeholder="password"
+                            />
+                        </div>
+                        <button type="submit">Submit</button>
+                    </Form>
+                </Layout>
+            )}
+        </Formik>
+    );
+};
+
+export default withApollo(RegisterPage);
+```
+
 ## sundry
 
 ## ts-node-dev
