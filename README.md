@@ -1121,7 +1121,30 @@ export default withFormik({
 
 ### passing props methods
 
-```jsx
+./components/fields/InputField.tsx
+
+```typescript
+import { FieldProps } from "formik";
+
+type InputProps = React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+>;
+
+export const InputField: React.FC<FormikProps & InputProps> = ({
+    form,
+    field,
+    props
+}) => {
+    const errorMessage = touched[field.name] && errors[field.name];
+
+    return <input {...fields} {...props} />;
+};
+```
+
+./pages/register.tsx
+
+```typescript
 import * as React from "react";
 import { Formik, Form, Field } from "formik";
 import Layout from "../components/Layout";
@@ -1146,19 +1169,29 @@ const RegisterPage: React.FC = () => {
             onSubmit={handleSubmit}
         >
             {() => (
+                {({ isSubmitting }) => (
                 <Layout title="Register">
                     <Form>
                         <div>
-                            <Field name="firstName" placeholder="firstName" />
+                            <Field
+                                name="firstName"
+                                placeholder="firstName"
+                                component={InputField}
+                            />
                         </div>
                         <div>
-                            <Field name="lastName" placeholder="lastName" />
+                            <Field
+                                name="lastName"
+                                placeholder="lastName"
+                                component={InputField}
+                            />
                         </div>
                         <div>
                             <Field
                                 name="email"
                                 type="email"
                                 placeholder="email"
+                                component={InputField}
                             />
                         </div>
                         <div>
@@ -1166,17 +1199,52 @@ const RegisterPage: React.FC = () => {
                                 name="password"
                                 type="password"
                                 placeholder="password"
+                                component={InputField}
                             />
                         </div>
-                        <button type="submit">Submit</button>
+                        <button disabled={isSubmitting} type="submit">
+                            Submit
+                        </button>
                     </Form>
                 </Layout>
+            )}
             )}
         </Formik>
     );
 };
 
 export default withApollo(RegisterPage);
+```
+
+## Handling ApolloClient errors with Formik
+
+```typescript
+const handleSubmit = React.useCallback(
+    async (values, { setErrors, setSubmitting }) => {
+        setSubmitting(true);
+        try {
+            await register({ variables: { input: values } });
+            setSubmitting(false);
+        } catch (err) {
+            const errors: { [key: string]: string } = {};
+            err.graphQLErrors[0].extensions.exception.validationErrors.forEach(
+                ({
+                    property,
+                    constraints
+                }: {
+                    property: string;
+                    constraints: { [key: string]: string };
+                }) => {
+                    errors[property] = Object.values(constraints)[0];
+                }
+            );
+
+            setErrors(errors);
+            setSubmitting(false);
+        }
+    },
+    []
+);
 ```
 
 ## sundry
