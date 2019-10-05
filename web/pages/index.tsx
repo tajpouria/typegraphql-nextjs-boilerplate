@@ -1,23 +1,8 @@
 import { withApollo } from "../lib/apollo";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
-
-const USERS = gql`
-    query {
-        users {
-            id
-            firstName
-            lastName
-            fullName
-            email
-            password
-            confirmed
-        }
-    }
-`;
+import { useUsersQuery } from "../generated/graphql";
 
 const Index: React.FC = () => {
-    const { data } = useQuery(USERS);
+    const { data } = useUsersQuery();
     console.log(data);
 
     return <div>hello</div>;

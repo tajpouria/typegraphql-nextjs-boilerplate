@@ -990,6 +990,10 @@ query {
 > npx create-next-app --example with-typescript web
 > yarn yarn upgrade --interative
 
+### setup next_with_apollo_client_auth
+
+https://github.com/zeit/next.js/blob/canary/examples/with-apollo-auth/lib/apollo.js
+
 ## sundry
 
 ## ts-node-dev
