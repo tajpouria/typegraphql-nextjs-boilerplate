@@ -6,6 +6,7 @@ import * as Yup from "yup";
 
 import { InputField } from "../components/fields/InputField";
 import { useLoginMutation } from "../generated/graphql";
+import Layout from "../components/Layout";
 
 const LoginPage: React.FC = () => {
     const [login] = useLoginMutation();
@@ -24,49 +25,51 @@ const LoginPage: React.FC = () => {
                 return setErrors({ email: "Invalid email or password." });
             }
 
-            Router.push("/");
+            Router.push("/hello");
         },
         []
     );
 
     return (
-        <Formik
-            initialValues={{
-                email: "",
-                password: ""
-            }}
-            onSubmit={handleSubmit}
-            validationSchema={Yup.object().shape({
-                email: Yup.string()
-                    .email()
-                    .required(),
-                password: Yup.string().min(3)
-            })}
-        >
-            {({ isSubmitting }) => (
-                <Form>
-                    <div>
-                        <Field
-                            name="email"
-                            type="email"
-                            placeholder="email"
-                            component={InputField}
-                        />
-                    </div>
-                    <div>
-                        <Field
-                            name="password"
-                            type="password"
-                            placeholder="password"
-                            component={InputField}
-                        />
-                    </div>
-                    <button type="submit" disabled={isSubmitting}>
-                        Login
-                    </button>
-                </Form>
-            )}
-        </Formik>
+        <Layout title="Login">
+            <Formik
+                initialValues={{
+                    email: "",
+                    password: ""
+                }}
+                onSubmit={handleSubmit}
+                validationSchema={Yup.object().shape({
+                    email: Yup.string()
+                        .email()
+                        .required(),
+                    password: Yup.string().min(3)
+                })}
+            >
+                {({ isSubmitting }) => (
+                    <Form>
+                        <div>
+                            <Field
+                                name="email"
+                                type="email"
+                                placeholder="email"
+                                component={InputField}
+                            />
+                        </div>
+                        <div>
+                            <Field
+                                name="password"
+                                type="password"
+                                placeholder="password"
+                                component={InputField}
+                            />
+                        </div>
+                        <button type="submit" disabled={isSubmitting}>
+                            Login
+                        </button>
+                    </Form>
+                )}
+            </Formik>
+        </Layout>
     );
 };
 

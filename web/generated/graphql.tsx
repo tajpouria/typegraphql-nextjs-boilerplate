@@ -115,6 +115,14 @@ export type LoginMutation = (
   )> }
 );
 
+export type ProtectedHelloQueryVariables = {};
+
+
+export type ProtectedHelloQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'hello'>
+);
+
 export type RegisterMutationVariables = {
   input: RegisterInput
 };
@@ -207,6 +215,36 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const ProtectedHelloDocument = gql`
+    query ProtectedHello {
+  hello
+}
+    `;
+
+/**
+ * __useProtectedHelloQuery__
+ *
+ * To run a query within a React component, call `useProtectedHelloQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProtectedHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProtectedHelloQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProtectedHelloQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProtectedHelloQuery, ProtectedHelloQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProtectedHelloQuery, ProtectedHelloQueryVariables>(ProtectedHelloDocument, baseOptions);
+      }
+export function useProtectedHelloLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProtectedHelloQuery, ProtectedHelloQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProtectedHelloQuery, ProtectedHelloQueryVariables>(ProtectedHelloDocument, baseOptions);
+        }
+export type ProtectedHelloQueryHookResult = ReturnType<typeof useProtectedHelloQuery>;
+export type ProtectedHelloLazyQueryHookResult = ReturnType<typeof useProtectedHelloLazyQuery>;
+export type ProtectedHelloQueryResult = ApolloReactCommon.QueryResult<ProtectedHelloQuery, ProtectedHelloQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($input: RegisterInput!) {
   register(input: $input) {

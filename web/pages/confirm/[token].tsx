@@ -20,7 +20,7 @@ const ConfirmTokenPage = (context: MyContext) => {
         }
     }, []);
 
-    return <div>Oops something goes wrongs.</div>;
+    return <div>Loading...</div>;
 };
 
 ConfirmTokenPage.getInitialProps = (context: NextPageContext) => {

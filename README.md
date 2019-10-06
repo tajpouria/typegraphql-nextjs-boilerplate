@@ -1247,6 +1247,77 @@ const handleSubmit = React.useCallback(
 );
 ```
 
+## Handling Protected Routes in Next
+
+### redirect on server side rendering
+
+./lib/apollo.tsx
+
+```typescript
+try {
+    // Run all GraphQL queries
+    const { getDataFromTree } = await import("@apollo/react-ssr");
+    await getDataFromTree(
+        <AppTree
+            pagProps={{
+                ...pageProps,
+                apolloClient
+            }}
+        />
+    );
+} catch (error) {
+    console.error("Error while running `getDataFromTree`", error);
+
+    // *** handling server side rendering auth routes
+    if (error.graphQLErrors[0].message.includes("not authenticated")) {
+        /*
+        actually we send on server side we throw and Error with not authenticated message then we can redirect user base upon it:
+        ./modules/middleware/IsAuth.ts
+        if(req.session.userId){
+            throw new Error('not authenticated')
+        }
+        */
+        redirect(ctx, "/login");
+    }
+}
+```
+
+### Router.replace in on the client
+
+> yarn add apollo-link-error
+
+./lib/apollo.tsx
+
+```typescript
+import { onError } from "apollo-link-error";
+
+const ErrorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors)
+        graphQLErrors.map(({ message, locations, path }) => {
+            console.log(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+            /*
+        actually we send on server side we throw and Error with not authenticated message then we can redirect user base upon it:
+        ./modules/middleware/IsAuth.ts
+        if(req.session.userId){
+            throw new Error('not authenticated')
+        }
+        */
+            if (message.includes("not authenticated")) {
+                Router.replace("/login"); // *** or Router.push('/login')
+            }
+        });
+    if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
+return new ApolloClient({
+    ssrMode: typeof window === "undefined",
+    link: ErrorLink.concat(authLink.concat(httpLink)), // *** set multipleLink using ApolloLink1.concat(ApolloLink2.concat(httpLink))
+    cache: new InMemoryCache().restore(initialState)
+});
+```
+
 ## sundry
 
 ## ts-node-dev

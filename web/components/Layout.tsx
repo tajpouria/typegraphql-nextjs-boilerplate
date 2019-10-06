@@ -33,7 +33,12 @@ const Layout: React.FunctionComponent<Props> = ({
                 </div>
                 <div>
                     <Link href="/login">
-                        <a>Login</a>
+                        <a>login</a>
+                    </Link>
+                </div>
+                <div>
+                    <Link href="/hello">
+                        <a>Hello</a>
                     </Link>
                 </div>
             </nav>
