@@ -16,7 +16,7 @@ const RegisterPage: React.FC = () => {
             setSubmitting(true);
             try {
                 await register({ variables: { input: values } });
-                Router.push("/confirm-email");
+                Router.push("/check-email");
             } catch (err) {
                 const errors: { [key: string]: string } = {};
                 err.graphQLErrors[0].extensions.exception.validationErrors.forEach(

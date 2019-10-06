@@ -3,10 +3,9 @@ import { useConfirmMutation } from "../../generated/graphql";
 import redirect from "../../lib/redirect";
 import { withApollo } from "../../lib/apollo";
 import { useEffect } from "react";
+import { MyContext } from "../../interfaces/MyContext";
 
-interface MyContext extends NextPageContext {
-    token?: string;
-}
+
 
 const ConfirmTokenPage = (context: MyContext) => {
     const [confirmUser, { data }] = useConfirmMutation();

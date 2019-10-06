@@ -12,5 +12,5 @@ export const createAndSetForgetPasswordLink = async (userId: number) => {
         60 * 60 * 24 // 1 day
     );
 
-    return token;
+    return `change-password/${token}`;
 };

@@ -1,12 +1,12 @@
 import * as React from "react";
 import Layout from "../components/Layout";
 
-const ConfirmEmailPage: React.FC = () => {
+const CheckEmailPage: React.FC = () => {
     return (
-        <Layout title="Confirm Email">
+        <Layout title="Check Email">
             <div>Check your email for confirmation link.</div>
         </Layout>
     );
 };
 
-export default ConfirmEmailPage;
+export default CheckEmailPage;

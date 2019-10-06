@@ -12,5 +12,5 @@ export const createAndSetConfirmationLink = async (userId: number) => {
         60 * 60 * 24
     ); // 1 day
 
-    return token;
+    return `confirm/${token}`;
 };
