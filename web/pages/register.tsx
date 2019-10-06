@@ -1,6 +1,8 @@
 import * as React from "react";
+import Router from "next/router";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+
 import Layout from "../components/Layout";
 import { useRegisterMutation } from "../generated/graphql";
 import { withApollo } from "../lib/apollo";
@@ -14,7 +16,7 @@ const RegisterPage: React.FC = () => {
             setSubmitting(true);
             try {
                 await register({ variables: { input: values } });
-                setSubmitting(false);
+                Router.push("/confirm-email");
             } catch (err) {
                 const errors: { [key: string]: string } = {};
                 err.graphQLErrors[0].extensions.exception.validationErrors.forEach(
