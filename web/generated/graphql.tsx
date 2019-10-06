@@ -91,6 +91,16 @@ export type User = {
   confirmed: Scalars['Boolean'],
 };
 
+export type ConfirmMutationVariables = {
+  token: Scalars['String']
+};
+
+
+export type ConfirmMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'confirm'>
+);
+
 export type RegisterMutationVariables = {
   input: RegisterInput
 };
@@ -116,6 +126,36 @@ export type UsersQuery = (
 );
 
 
+export const ConfirmDocument = gql`
+    mutation Confirm($token: String!) {
+  confirm(token: $token)
+}
+    `;
+export type ConfirmMutationFn = ApolloReactCommon.MutationFunction<ConfirmMutation, ConfirmMutationVariables>;
+
+/**
+ * __useConfirmMutation__
+ *
+ * To run a mutation, you first call `useConfirmMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmMutation, { data, loading, error }] = useConfirmMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useConfirmMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ConfirmMutation, ConfirmMutationVariables>) {
+        return ApolloReactHooks.useMutation<ConfirmMutation, ConfirmMutationVariables>(ConfirmDocument, baseOptions);
+      }
+export type ConfirmMutationHookResult = ReturnType<typeof useConfirmMutation>;
+export type ConfirmMutationResult = ApolloReactCommon.MutationResult<ConfirmMutation>;
+export type ConfirmMutationOptions = ApolloReactCommon.BaseMutationOptions<ConfirmMutation, ConfirmMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($input: RegisterInput!) {
   register(input: $input) {

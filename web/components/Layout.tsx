@@ -21,15 +21,21 @@ const Layout: React.FunctionComponent<Props> = ({
         </Head>
         <header>
             <nav>
-                <Link href="/">
-                    <a>Home</a>
-                </Link>
-                <Link href="/about">
-                    <a>About</a>
-                </Link>
-                <Link href="/initial-props">
-                    <a>With Initial Props</a>
-                </Link>
+                <div>
+                    <Link href="/">
+                        <a>Home</a>
+                    </Link>
+                </div>
+                <div>
+                    <Link href="/register">
+                        <a>Register</a>
+                    </Link>
+                </div>
+                <div>
+                    <Link href="/login">
+                        <a>Login</a>
+                    </Link>
+                </div>
             </nav>
         </header>
         {children}

@@ -12,5 +12,5 @@ export const createAndSetConfirmationLink = async (userId: number) => {
         60 * 60 * 24
     ); // 1 day
 
-    return `http://localhost:3000/${token}`;
+    return token;
 };

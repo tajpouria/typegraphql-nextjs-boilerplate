@@ -873,7 +873,7 @@ export const CreateUser = createCreateResolver(
 ## Query Complexity
 
 **Query complexity** is a tactic that can be addded to a graphql server to prevent abuse.
-specifically prevent user from sending too much query that make server carsh or slow down.
+specifically prevent user from sending too much query that make server crash or slow down.
 
 > yarn add graphql-query-complexity
 

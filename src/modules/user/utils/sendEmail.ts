@@ -18,7 +18,7 @@ export async function sendEmail(email: string, token: string) {
         to: email, // list of receivers
         subject: "Confirmation ✔", // Subject line
         text: "Hello world?", // plain text body
-        html: `<a href="http://localhost:3000/${token}">http://localhost:3000/${token}</a>` // html body
+        html: `<a href="http://localhost:3000/confirm/${token}">http://localhost:3000/confirm/${token}</a>` // html body
     });
 
     console.log("Message sent: %s", info.messageId);
