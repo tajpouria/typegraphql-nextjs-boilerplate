@@ -1304,7 +1304,10 @@ const ErrorLink = onError(({ graphQLErrors, networkError }) => {
             throw new Error('not authenticated')
         }
         */
-            if (message.includes("not authenticated")) {
+            if (
+                message.includes("not authenticated") &&
+                typeof window !== "undefined"
+            ) {
                 Router.replace("/login"); // *** or Router.push('/login')
             }
         });

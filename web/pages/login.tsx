@@ -5,7 +5,7 @@ import { Field, Formik, Form } from "formik";
 import * as Yup from "yup";
 
 import { InputField } from "../components/fields/InputField";
-import { useLoginMutation } from "../generated/graphql";
+import { useLoginMutation, MeDocument, MeQuery } from "../generated/graphql";
 import Layout from "../components/Layout";
 
 const LoginPage: React.FC = () => {
@@ -16,7 +16,15 @@ const LoginPage: React.FC = () => {
             setSubmitting(true);
 
             const response = await login({
-                variables: { email, password }
+                variables: { email, password },
+                update: (store, { data }) => {
+                    if (!data || data.login) return null;
+
+                    store.writeQuery<MeQuery>({
+                        query: MeDocument,
+                        data: { __typename: "Query", me: data.login }
+                    });
+                }
             });
 
             setSubmitting(false);

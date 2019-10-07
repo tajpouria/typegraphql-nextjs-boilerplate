@@ -9,8 +9,8 @@ import { setContext } from "apollo-link-context";
 import { ApolloProvider } from "@apollo/react-hooks";
 import fetch from "isomorphic-unfetch";
 import { onError } from "apollo-link-error";
-import redirect from "./redirect";
 import Router from "next/router";
+import redirect from "./redirect";
 // import redirect from "./redirect";
 
 /**
@@ -209,7 +209,10 @@ function createApolloClient(
                 console.log(
                     `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
                 );
-                if (message.includes("not authenticated")) {
+                if (
+                    message.includes("not authenticated") &&
+                    typeof window !== "undefined"
+                ) {
                     Router.replace("/login");
                 }
             });
