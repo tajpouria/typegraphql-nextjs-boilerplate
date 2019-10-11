@@ -1334,3 +1334,216 @@ Tweaked version of node-dev that uses ts-node under the hood.
     "start": "tsnd --respawn  src/index.ts"
 }
 ```
+
+## [ GraphQL SDL review ](https://alligator.io/graphql/graphql-sdl/)
+
+### the basics
+
+```graphql
+# Enumeration type
+enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+type Todo {
+    id: ID!
+    name: String!
+    description: String!
+    priority: String!
+}
+
+type Query {
+    todo(id: ID!): Todo
+    allTodos: [Todo!]!
+}
+
+type Mutation {
+    addTodo(name: String!, priority: Priority = LOW): Todo!
+    removeTodo(id: ID!): Todo!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+```
+
+#### Object Types
+
+-   are defined with the type keyword and start with a capital letter by convention.
+-   Each field in an object type can be resolve to either other object types or scalar types.
+-   Only the Query root type is required in all GraphQL schemas
+-   a Subscription root type is also available, to define operations that a client can subscribe to
+
+#### Built-In Scalar Types
+
+There are 5 built-in scalar types with GraphQL: Int, Float, String, Boolean and ID (The ID type resolves to a string, but expects a unique value).
+
+#### Enumeration Types
+
+Enumeration types allow to define a specific subset of possible values for a type.
+
+#### Type Modifiers
+
+modifiers can be used on the type that a field resolves to by using characters like ! and \[…\]
+
+-   String : nullable string (the resolved value can be null)
+-   String! : Non-nullable string (if the resolved value is null, an error will be raised)
+-   \[String\] : Nullable list of nullable string values. The entire value can be null, or specific list elements can be null
+-   \[String!\] : Nullable list of non-nullable string values. Then entire value can be null, but specific list elements cannot be null
+-   \[String!\]! : Non-nullable list of non-nullable string values
+
+#### Comments
+
+Comments are added with the # symbol and only single-line comments are allowed.
+
+#### Custom Scalar Types
+
+It’s also possible to define custom scalar types with a syntax like this:
+
+```graphql
+scalar DateTime
+```
+
+#### Union Types
+
+Union types define a type that can resolve to a number of possible **object types**:
+
+```graphql
+# ...
+
+union Vehicle = Car | Boat | Plane
+
+type Query {
+    getVehicle(id: ID!): Vehicle!
+}
+```
+
+With union types, on the client, inline fragments have to be used to select the desired fields depending on what subtype is being resolved
+
+```graphql
+query {
+    getVehicle {
+        ... on Car {
+            yead
+        }
+        ... on Boat {
+            color
+        }
+        ... on Plane {
+            seating
+        }
+    }
+}
+```
+
+#### Interfaces
+
+Interfaces are somewhat similar to union types, but they allow multiple object types to share some fields:
+
+```graphql
+interface Vehicle {
+    color: String
+    make: String
+    speed: Int
+}
+
+type Car implements Vehicle {
+    color: String
+    make: String
+    speed: Int
+    model: String
+}
+```
+
+Each type that implements an interface need to have fields corresponding to all the interface’s fields, but can also have aditional fields of their own.
+
+This way, on the client, inline fragments can be used to get fields that are unique to certain types:
+
+```graphql
+graphql {
+    getVehicle {
+        color
+        make
+        ...on Car {
+            model
+        }
+    }
+}
+
+```
+
+#### Input Types
+
+When a query or mutation expects multiple arguments, it can be easier to define input types where each field represents an argument:
+
+```graphql
+#...
+
+input NewTodoInput {
+    name: String!
+    priority: Priority
+}
+
+type Mutation {
+    addTodo(newTodoInput: NewTodoInput!): Todo!
+}
+```
+
+#### Schema Documentation
+
+There’s also a syntax to add human-readable documentation for types and fields, which can become really helpful when using a tool like GraphiQL or GraphQL Playground to browse the documentation for a schema.
+
+```graphql
+"""
+Priority level
+"""
+enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+type Todo {
+    id: ID!
+    name: String!
+    """
+    Useful description for todo item
+    """
+    description: String
+    priority: Priority!
+}
+
+"""
+Queries available on todo app service
+"""
+type Query {
+    """
+    Get one todo item
+    """
+    todo(id: ID!): Todo
+
+    """
+    List of all todo items
+    """
+    allTodos: [Todo!]!
+}
+
+type Mutation {
+    addTodo(
+        "Name for todo item"
+        name: String!
+        "Priority levl of todo item"
+        priority: Priority = LOW
+    ): Todo
+
+    removeTodo(id: ID!): Todo!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+```
