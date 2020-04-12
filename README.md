@@ -1,6 +1,6 @@
 # Type GraphQL Series Integrated with NextJS
 
-A quick introduction to [type-graphql](https://typegraphql.ml) library with NextJS
+A quick introduction to [type-graphql](https://github.com/MichalLytek/type-graphql) library with NextJS
 
 ## Bootstrap with apollo-server-graphql
 
