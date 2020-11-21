@@ -15,17 +15,19 @@ describe("MeResolver", () => {
     });
 
     it("returns the user if userId is available in request session", async () => {
-        const meQuery = `query Me {
-   me {
-     id
-     firstName
-     lastName
-     fullName
-     email
-     password
-     confirmed
-   }
- }`;
+        const meQuery = `
+            query Me {
+                me {
+                    id
+                    firstName
+                    lastName
+                    fullName
+                    email
+                    password
+                    confirmed
+                }
+            }
+        `;
 
         const user = await User.create({
             firstName: faker.name.firstName(),
@@ -49,17 +51,19 @@ describe("MeResolver", () => {
     });
 
     it("returns null if userId is NOT available in request session", async () => {
-        const meQuery = `query Me {
-   me {
-     id
-     firstName
-     lastName
-     fullName
-     email
-     password
-     confirmed
-   }
- }`;
+        const meQuery = `
+            query Me {
+                me {
+                    id
+                    firstName
+                    lastName
+                    fullName
+                    email
+                    password
+                    confirmed
+                }
+            }
+        `;
 
         const response = await gCall({ source: meQuery });
 

@@ -2,11 +2,21 @@
 
 A quick introduction to [type-graphql](https://github.com/MichalLytek/type-graphql) library with NextJS
 
-## Bootstrap with apollo-server-graphql
+## Development bootstrap
 
-### installing
+```sh
+# Install dependencies
+> npm i
 
-> yarn add reflect-metadata graphql type-graphql
+# Setup development infrastructure
+> docker-compose up
+
+# Starting the server
+> npm start
+
+# Starting the web application
+> cd web && npm run dev
+```
 
 ### bootstrapping
 
@@ -160,13 +170,10 @@ export class RegisterInput {
 @Resolver()
 export class UserResolver {
     @Mutation(() => User)
-    register(@Arg("input")
-    {
-        firstName,
-        lastName,
-        email,
-        password
-    }: RegisterInput): Promise<User> {
+    register(
+        @Arg("input")
+        { firstName, lastName, email, password }: RegisterInput
+    ): Promise<User> {
         // doing register stuff
     }
 }
@@ -459,13 +466,10 @@ const createAndSetConfirmationLink = async (userId: number) => {
 @Resolver()
 export class UserResolver {
     @Mutation(() => User)
-    async register(@Arg("input")
-    {
-        firstName,
-        lastName,
-        email,
-        password
-    }: RegisterInput): Promise<User> {
+    async register(
+        @Arg("input")
+        { firstName, lastName, email, password }: RegisterInput
+    ): Promise<User> {
         const user = await User.create({
             firstName,
             lastName,
@@ -515,7 +519,7 @@ export class LogoutResolver {
     async logout(@Ctx() ctx: MyContext): Promise<boolean> {
         return new Promise((resolve, reject) => {
             // destroy the session
-            ctx.req.session!.destroy(err => {
+            ctx.req.session!.destroy((err) => {
                 if (err) {
                     console.error(err);
                     reject(false);
@@ -1109,9 +1113,7 @@ export default withFormik({
         }, 2000);
     },
     validationSchema: object().shape({
-        email: string()
-            .email("Email not valid")
-            .required("Email is required"),
+        email: string().email("Email not valid").required("Email is required"),
         password: string()
             .min(9, "Password must be 9 character or longer")
             .required("Password is required")

@@ -15,17 +15,18 @@ describe("RegisterResolver", () => {
     });
 
     it("register the valid user", async () => {
-        const registerMutation = `mutation Register($input: RegisterInput!) {
-          register(input: $input) {
-            id
-            firstName
-            lastName
-            fullName
-            email
-            password
-            confirmed
-          }
-        }
+        const registerMutation = `
+            mutation Register($input: RegisterInput!) {
+                register(input: $input) {
+                    id
+                    firstName
+                    lastName
+                    fullName
+                    email
+                    password
+                    confirmed
+                }
+            }
         `;
 
         const person = {

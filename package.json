@@ -15,11 +15,10 @@
         "graphql-query-complexity": "^0.3.0",
         "ioredis": "^4.14.1",
         "nodemailer": "^6.3.0",
-        "pg": "^7.12.1",
+        "pg": "^8.5.1",
         "reflect-metadata": "^0.1.13",
-        "ts-node": "^8.4.1",
         "type-graphql": "^0.17.5",
-        "typeorm": "^0.2.19",
+        "typeorm": "^0.2.29",
         "uuid": "^3.3.3"
     },
     "devDependencies": {
@@ -38,11 +37,12 @@
         "faker": "^4.1.0",
         "jest": "^24.9.0",
         "ts-jest": "^24.1.0",
+        "ts-node": "^8.4.1",
         "ts-node-dev": "^1.0.0-pre.43",
         "typescript": "^3.6.3"
     },
     "scripts": {
-        "start": "tsnd --respawn  src/index.ts",
+        "start": "tsnd --respawn src/index.ts",
         "setup:db": "yarn ts-node src/test-utils/setup.ts",
         "test": "yarn run setup:db && jest --detectOpenHandles"
     }

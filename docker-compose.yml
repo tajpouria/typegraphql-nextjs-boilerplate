@@ -1,0 +1,17 @@
+# Provides 'development' environment requirements
+version: "3.8"
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgresz
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=typegraphql_series_test
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
